@@ -59,7 +59,7 @@ def get_student_by_id(request, pk):
     return Response(serializer.data)
 
 
-@api_view(['POST']) # TODO: To test
+@api_view(['POST'])
 def create_student(request):
     data = request.data
     student = Student.objects.create(
@@ -72,7 +72,7 @@ def create_student(request):
 
     return Response(serializer.data)
 
-@api_view(['PUT']) # TODO: To test
+@api_view(['PUT'])
 def update_student(request, pk):
     data = request.data
     student = Student.objects.get(id=pk)
@@ -83,7 +83,7 @@ def update_student(request, pk):
 
     return Response(serializer.data)
 
-@api_view(['DELETE']) # TODO: To test
+@api_view(['DELETE'])
 def delete_student(request, pk):
     Student.objects.get(id=pk).delete()
     return Response('Student deleted successfully!')
