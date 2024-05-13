@@ -49,11 +49,11 @@ export const EditStudentButton = ({ student }: EditStudentButtonProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className='bg-blue-500 hover:bg-blue-600 active:bg-blue-700 h-7'>Edit</Button>
+        <Button className='bg-blue-500 hover:bg-blue-600 active:bg-blue-700 h-7'>Update</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit student</DialogTitle>
+          <DialogTitle>Update student</DialogTitle>
           <DialogDescription>
             Make changes to the student's record here. Click save when you're done.
           </DialogDescription>
