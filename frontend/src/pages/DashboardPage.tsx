@@ -1,42 +1,29 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Student } from "@/models/Student";
-import { AppDispatch, RootState } from "@/services/state/store";
-import { getStudentsAsync } from "@/services/state/students/studentsThunks";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useTableActions } from "../hooks/useTableActions";
+import { DeleteStudentButton } from "../components/DeleteStudentButton";
+import { EditStudentButton } from "../components/EditStudentButton";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export const DashboardPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const [ name, setName ] = useState('');
-  const [ course, setCourse ] = useState('')
-  const [ gender, setGender ] = useState('')
-  const [ minAge, setMinAge ] = useState<number | ''>('')
-  const [ maxAge, setMaxAge ] = useState<number | ''>('')
-
-  const students = useSelector((state: RootState) => state.students.data); 
-  const [filteredStudents, setFilteredStudents] = useState<Student[]>(students);
-  
-  useEffect(()=>{
-    dispatch(getStudentsAsync())
-  },[])
-
-
-  useEffect(()=>{
-    setFilteredStudents(students.filter(student => {
-      if (name && !student.name.toLowerCase().includes(name.toLowerCase())) return false;
-      if (course && course !== 'All' && student.course !== course) return false;
-      if (gender && gender !== 'All' && student.gender !== gender) return false;
-      if (minAge && student.age < minAge) return false;
-      if (maxAge && student.age > maxAge) return false;
-
-      return true;
-    }));
-  }, [name, course, gender, minAge, maxAge])
+  const {
+    setName,
+    setCourse,
+    setGender,
+    setMinAge,
+    setMaxAge,
+    filteredStudents,
+    name,
+    course,
+    gender,
+    minAge,
+    maxAge,
+    deleteStudent
+  } = useTableActions();
 
 
   return (
@@ -80,19 +67,16 @@ export const DashboardPage = () => {
                 </SelectContent>
               </Select>
 
-              <Select value={gender} onValueChange={setGender} >
-                <SelectTrigger className='w-1/4 flex-grow'>
-                  <SelectValue placeholder='Filter by gender'/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value='All'>All</SelectItem>
-                    <SelectItem value='male'>Male</SelectItem>
-                    <SelectItem value='female'>Female</SelectItem>
-                    <SelectItem value='other'>Other</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <RadioGroup className='flex' value={gender} onValueChange={setGender}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="male" id="r1" />
+                  <Label htmlFor="r1">Male</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="female" id="r2" />
+                  <Label htmlFor="r2">Female</Label>
+                </div>
+              </RadioGroup>
 
               <div className='w-1/4 flex flex-grow gap-1'>
                 <Input value={minAge} onChange={(event) => {
@@ -128,7 +112,10 @@ export const DashboardPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredStudents.map((student, idx) => (
+            {filteredStudents.map((student, idx) => {
+              const id = student.id as number;
+
+              return (
               <TableRow key={`row-${idx}`}>
                 <TableCell>{student.id}</TableCell>
                 <TableCell>{student.name}</TableCell>
@@ -136,11 +123,11 @@ export const DashboardPage = () => {
                 <TableCell>{student.gender.slice(0,1).toUpperCase() + student.gender.slice(1)}</TableCell>
                 <TableCell>{student.age}</TableCell>
                 <TableCell className='space-x-2'>
-                  <button className='bg-blue-500 text-white px-2 py-1 rounded' onClick={()=>{}}>Edit</button>
-                  <button className='bg-red-500 text-white px-2 py-1 rounded' onClick={()=>{}}>Delete</button>
+                  <EditStudentButton student={student} />
+                  <DeleteStudentButton id={id} deleteStudent={deleteStudent} />
                 </TableCell>
               </TableRow>
-            ))}
+            )})}
           </TableBody>
         </Table>
       </CardContent>

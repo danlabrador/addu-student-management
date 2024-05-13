@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Student } from "../../../models/Student";
-import { getStudentsAsync, updateStudentAsync, deleteStudentAsync } from "./studentsThunks";
+import { getStudentsAsync, updateStudentAsync, createStudentAsync, deleteStudentAsync } from "./studentsThunks";
 
 const studentsSlice = createSlice({
   name: 'students',
@@ -23,6 +23,14 @@ const studentsSlice = createSlice({
       .addCase(getStudentsAsync.fulfilled, (state, action) => {
         state.isLoading = false;
         state.data = action.payload;
+      })
+      .addCase(createStudentAsync.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(createStudentAsync.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.data.push(action.payload);
       })
       .addCase(updateStudentAsync.pending, state => {
         state.isLoading = true;
